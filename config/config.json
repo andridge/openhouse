@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "admin",
+    "database": "openhouse2",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port":"1101"
+  },
+  "test": {
+    "username": "root",
+    "password": "admin",
+    "database": "openhouse2",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port":"1101"
+  },
+  "production": {
+    "username": "root",
+    "password":"admin",
+    "database": "openhouse2",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port":"1101"
+  }
+}

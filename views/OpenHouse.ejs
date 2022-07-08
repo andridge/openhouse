@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <metaname name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+    <title>
+        
+    </title>
+    <!--css start here ...was too lazy to make another file ;)-->
+    <style>
+#map{
+  height:475px;
+  width:100%;
+  border-radius: 10px;
+}
+.card {
+  border-radius: 10px;
+  box-shadow: 5px 2.5px 5px 0px rgb(179, 54, 252);
+  padding: 5px;
+  background: #FFFFFF;
+  width:fit-content;
+  height:fit-content;
+  border-style: hidden;
+    font-family:"Lucida Console";
+    font-size: smaller;
+    float: left;
+    overflow-x:auto ;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+   
+}
+.myborders {
+    border-radius:10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px;
+    background: #DAF7A6;
+    border-style: hidden;
+    font-family:"Lucida Console";
+    font-size: large;
+    font-weight: 200px;
+}
+    /* Set additional styling options for the columns*/
+
+    </style>
+    <body>
+
+ <div id="map">  
+ </div>
+ <br>
+ <br>
+ <div>
+<form id="house" onsubmit="allHouse(event)">
+  <input class="myborders" id="houses" type="submit" value="HOUSES AVAILABLE">
+</form>
+<br>
+<div class="grid">
+<div id="first">
+</div>
+</div>
+ </div>
+    </body>
+    <!-- JAVASCRIPT CODE  too LAZY to MAKE A NEW FILE SORRY AGAIN ;)-->
+    <script>
+      //
+      var theSubmitButton = document.getElementById('houses');
+theSubmitButton.onclick = function(){
+  var house = document.getElementById('house');
+  house.style.display="none";
+}
+
+function allHouse(event){
+  event.preventDefault();
+  var url ="http://localhost:1111/api_v1/all_houses";
+  var xhttp = new XMLHttpRequest()
+      xhttp.open("GET", url, true)
+     // xhttp.responseType = "arraybuffer";
+    // xhttp.responseType = 'blob';
+      xhttp.onreadystatechange = function() {
+        
+         if(this.readyState == 4 && this.status == 200) {
+           //
+           
+          var first = document.getElementById('first');
+          var house = JSON.parse(this.responseText);
+          
+
+          loadDiv(house);
+          //console.log(arrayBufferView);
+         };
+        };
+        xhttp.send();
+}
+//
+var latLng 
+
+function loadDiv(house){
+
+    for(var x of house.data){
+     // var arrayBufferView = new Uint8Array(x.picture );
+      //var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+        var div = `
+     <div id="first"class="card">
+          <strong>PROPERTY NAME:</strong><small>${x.propertyName}</small><br><br>
+          <strong> PROPERTY SIZE PER SQUARE:</strong><small>${x.sizePerSquare}</small><br><br>
+                <strong>PROPERTY PRICE:</strong><small>${x.price}</small><br><br>
+                  <strong>PROPERTY PROPERTY TYPE:</strong><small>${x.propertyType}</small><br><br>
+                    <strong>PROPERTY BATHROOMS:</strong><small>${x.Bathrooms}</small><br><br>
+                      <strong>PROPERTY PARKING:</strong><small>${x.parking}</small><br><br>
+                        <strong> PROPERTY BEDROOMS:</strong><small>${x.bedrooms}</small><br><br>
+                          <strong>  PROPERTY POOL:</strong><small>${x.pool}</small><br><br>
+                          </div>
+        `;
+        document.getElementById("first").insertAdjacentHTML("beforeend",div);
+          var lat = x.latitude;
+          var lng = x.longitude;
+          var propertyName = x.propertyName;
+          console.log(lat);
+          console.log(lng);
+          console.log(propertyName);
+          latLng =new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
+           // Close the current InfoWindow.
+          
+          // Create a new InfoWindow.
+          infoWindow = new google.maps.InfoWindow({
+          content:propertyName,
+          position: latLng,
+          center:latLng,
+        }); 
+        infoWindow.open(map)
+    }
+   
+}
+
+//
+
+        //map
+        var map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 0.6440135709909124, lng: 37.939158984375005},
+        //center: myLatLng,
+        zoom:8,
+        //mapTypeId: 'satellite'
+      });
+     // map.setTilt(45);
+     //
+      // Create the initial InfoWindow.
+      let infoWindow = new google.maps.InfoWindow({
+       content: "This map shows location of all listed properties",
+      position: {lat: 0.6440135709909124, lng: 37.939158984375005},
+      });
+  infoWindow.open(map);
+
+    }
+    //
+    document.body.style.backgroundColor = "#FFADE7";
+   
+    </script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA57yiUtf2taJyhumFpGe20PHfaiXC68IA&callback=initMap&v=weekly"
+    async
+  ></script>
+</html>

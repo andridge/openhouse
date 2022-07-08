@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+    <title>
+        
+    </title>
+    <!--css start here ...was too lazy to make another file ;)-->
+
+
+<style>
+.card {
+  border-radius: 0px;
+  box-shadow: 12px 5px 10px 0 rgb(165, 211, 91);
+  padding: 50px;
+  height: 100%;
+  width: 100%; 
+  background:#FFADE7;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: large;
+  text-align: start;
+
+}
+.myborders {
+    border-radius:10px;
+    padding: 2px;
+    background: #DAF7A6;
+    font-family:"Lucida Console";
+    font-size: small;
+    font-weight: 200px;
+}
+#map{
+  height:70%;
+  width:100%;
+  border-radius: 50px;
+}
+    </style>
+    <body>
+      <!-- add form to the html page to add data to the database with. Note the respective id's are called to respective objects in the parameters -->
+        <div id="first" class="card">
+            <form id="newHouse"onsubmit="houseRegister(event)">
+                <input class="myborders" id="propertyName" type="text" name="propertyName" placeholder="PROPERTY NAME">
+                <input class="myborders" id="userId" type="text" name="userId" placeholder=" NATIONAL ID">
+                
+                <input class="myborders" id="propertyId" type="text" name="propertyId" placeholder="PROPERTY ID">
+                <input class="myborders" id="sizePerSquare" type="text" name="sizePerSquare" placeholder="SIZE PER SQUARE METERE">
+                <br>
+                <input class="myborders" id="firstName" type="text" name="firstName" placeholder="FIRST NAME">
+                <input class="myborders" id="lastName" type="text" name="lastName" placeholder="LAST NAME">
+                
+                <input class="myborders" id="email" type="text" name="email" placeholder="EMAIL">
+                <input class="myborders" id="phoneNumber" type="text" name="phoneNumber" placeholder="PHONE NUMBER">
+                <br>
+                <input class="myborders" id="price" type="text" name="price" placeholder="PRICE">
+                <input class="myborders"  id="propertyType" type="text"  name="propertyType" placeholder="PROPERTY TYPE">
+                <input class="myborders"  id="propertyStatus" type="text"  name="propertyStatus" placeholder="PROPERTY STATUS">
+                <input class="myborders"  id="Bathrooms" type="text"  name="Bathrooms" placeholder="BATHROOMS">
+                <br>
+                <input class="myborders"  id="parking" type="text"  name="parking" placeholder="PARKING">
+                <input class="myborders"  id="bedrooms" type="text"  name="bedrooms" placeholder="BEDROOM">
+                <input class="myborders"  id="pool" type="text"  name="pool" placeholder="POOL">
+                <br>
+                <input class="myborders" id="latitude" type="text" name="latitude" placeholder="LATITUDE">
+                <input class="myborders" id="longitude" type="text" name="longitude" placeholder="LONGITUDE">
+                <br>
+                <br>
+                <input class="myborders" accept="image/*" id="picture" type="file"  name="picture" placeholder="PICTURE">
+                <input class="myborders"  id="NEWHOUSE" type="submit" value="NEW HOUSE" >
+                  </form>
+                  <br>
+                  <!--add map to the html page-->
+                  <div id="map">  
+                  </div>
+                 </div>
+        <script  >
+          // declare variable map
+          var map;
+          //
+          var location;
+          //initiate map 
+         function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          //select center coordinates of map
+          center: {lat: 0.0236, lng: 37.9062},
+          //center: myLatLng,
+          zoom: 8,
+          //mapTypeId: 'satellite'
+        });
+       // map.setTilt(45);
+   //markers
+   // Create the initial InfoWindow.
+   //lets the user know the map is clickable to add new loaction 
+  let infoWindow = new google.maps.InfoWindow({
+    content: "Click on the map the location of the property to  get Lat/Lng!",
+    position: {lat: 0.0236, lng: 37.9062},
+  });
+  //open info window on the map showing the message
+  infoWindow.open(map);
+  //
+   // Configure the click listener.
+   map.addListener("click", (mapsMouseEvent) => {
+    // Close the current InfoWindow.
+    infoWindow.close();
+    // Create a new InfoWindow.
+    //create new location variable to store longitude and latitude data in json stringify form 
+   
+    infoWindow = new google.maps.InfoWindow({
+      position: mapsMouseEvent.latLng,
+    });
+    infoWindow.setContent(
+     JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2),
+    console.log(JSON)
+    );
+
+    infoWindow.open(map);
+  });
+}
+          //select html background page 
+                 document.body.style.backgroundColor = "#FFADE7";
+                 //form submit button
+                 var theSubmitButton = document.getElementById('NEWHOUSE');
+                 theSubmitButton.onclick = function(){
+                varnewHouse = document.getElementById('newHouse');
+                  };
+                  //form function after submition 
+                 function houseRegister(event){
+                   //prevents default values from being saved 
+                   event.preventDefault();
+                // parameters to parsed from the form to the route add_house 
+                //location is already a json stringify object therfore theres an error in stringifying again 
+                var params = {
+                    //id:document.querySelector('#propertyId').value,
+                    propertyName:document.querySelector('#propertyName').value,
+                    sizePerSquare:document.querySelector('#sizePerSquare').value,
+                    price:document.querySelector('#price').value,
+                    latitude:document.querySelector('#latitude').value,
+                    longitude:document.querySelector('#longitude').value,
+                    propertyType:document.querySelector('#propertyType').value,
+                   // picture:document.querySelector('#picture').value,
+                    Bathrooms:document.querySelector('#Bathrooms').value,
+                    parking:document.querySelector('#parking').value,
+                    userId:document.querySelector('#userId').value,
+                    bedrooms:document.querySelector('#bedrooms').value,
+                    pool:document.querySelector('#pool').value,
+                    propertyStatus:document.querySelector('#propertyStatus').value
+                  }
+                // url with route to add_house
+                var url = "http://localhost:1111/api_v1/add_house";
+                //perform a http request using xhttp library
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST",url,true)
+                // xhttp.setRequestHeader('Content-type','application/json');
+                 xhttp.send(JSON.stringify(params));
+                xhttp.onreadyStatechange = function(){
+                 if (this.readyState == 4 && this.status == "200") {
+               console = this.responseText;
+              }else {
+                 console.error(error);
+                 }
+              }
+                //parameters parsed from the form to the route add_user 
+                var params2 = {
+                   // id:document.querySelector('#userId').value,
+                    firstName:document.querySelector('#firstName').value,
+                    lastName:document.querySelector('#lastName').value,
+                    email:document.querySelector('#email').value,
+                    phoneNumber:document.querySelector('#phoneNumber').value,
+                    houseId:document.querySelector('#propertyId').value
+                }
+                // url with route to add_user
+                 var url ="http://localhost:1111/api_v1/add_user";
+                  //perform a http request using xhttp library
+                var xhttp = new XMLHttpRequest()
+                xhttp.open("POST",url,true)
+               // xhttp.setRequestHeader('Content-type','application/json');
+                xhttp.send(JSON.stringify(params2));
+                xhttp.onreadyStatechange = function(){
+                 if (this.readyState == 4 && this.status == "200") {
+               console = this.responseText;
+              }else {
+                 console.error(error);
+                 }
+              }
+            }
+            </script>
+            <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA57yiUtf2taJyhumFpGe20PHfaiXC68IA&callback=initMap&v=weekly"
+            async
+          ></script>
+    </body>
+</html>
